@@ -248,61 +248,68 @@
   });
 })();
 
-/* V4.3 / V4.6 — "Read" azul revela o texto longo.
-   Uma regra só para os cartões de nota e para os registros de currículo. */
+/* V7.1 — um único controle por trilha, flutuando sobre ela. */
 (function () {
   var n = 0;
 
-  function wire(host, body, label) {
-    if (!body) return;
-    var id = 'fold-' + (++n);
-    body.id = id;
-    body.hidden = true;
+  document.querySelectorAll('[data-rail]').forEach(function (rail) {
+    var cards = rail.querySelectorAll('.ncard');
+    if (!cards.length) return;
+
+    var ids = [];
+    Array.prototype.forEach.call(cards, function (card) {
+      var body = card.querySelector('.ncard__body');
+      if (!body) return;
+      body.id = 'fold-' + (++n);
+      body.hidden = true;
+      ids.push(body.id);
+    });
+    if (!ids.length) return;
+
+    var mod = rail.closest('.mod') || rail.parentElement;
+    var rotulo = rail.getAttribute('aria-label') || '';
+
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'ncard__more';
+    btn.className = 'rail-toggle';
     btn.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-controls', id);
+    btn.setAttribute('aria-controls', ids.join(' '));
     btn.appendChild(document.createTextNode('Read'));
-    if (label) btn.setAttribute('aria-label', 'Read about ' + label);
+    btn.setAttribute('aria-label', 'Read all cards in ' + rotulo);
+
     btn.addEventListener('click', function () {
-      var open = body.hidden;
-      body.hidden = !open;
-      btn.setAttribute('aria-expanded', String(open));
-      btn.firstChild.nodeValue = open ? 'Close' : 'Read';
+      var abrir = btn.getAttribute('aria-expanded') !== 'true';
+      Array.prototype.forEach.call(cards, function (card) {
+        var body = card.querySelector('.ncard__body');
+        if (!body) return;
+        body.hidden = !abrir;
+        body.scrollTop = 0;
+      });
+      btn.setAttribute('aria-expanded', String(abrir));
+      btn.firstChild.nodeValue = abrir ? 'Close' : 'Read';
+      btn.setAttribute('aria-label', (abrir ? 'Close all cards in ' : 'Read all cards in ') + rotulo);
+
+      if (abrir) {
+        var nav = document.querySelector('.nav');
+        var folga = (nav ? nav.getBoundingClientRect().height : 0) + 12;
+        if (mod.getBoundingClientRect().top < folga) {
+          var calmo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: mod.getBoundingClientRect().top + window.scrollY - folga,
+                            behavior: calmo ? 'auto' : 'smooth' });
+        }
+      }
     });
-    host.appendChild(btn);
-  }
 
-  document.querySelectorAll('.ncard').forEach(function (c) {
-    var t = c.querySelector('.ncard__t');
-    wire(c, c.querySelector('.ncard__body'), t ? t.textContent.trim() : '');
+    /* V10 — o botão é ancorado à trilha, não ao módulo: assim o seu centro
+       cai sempre sobre a borda inferior do cartão, tenha o módulo barra de
+       posição embaixo ou não. */
+    var wrap = rail.parentElement;
+    if (!wrap || !wrap.classList.contains('rail-wrap')) {
+      wrap = document.createElement('div');
+      wrap.className = 'rail-wrap';
+      rail.parentNode.insertBefore(wrap, rail);
+      wrap.appendChild(rail);
+    }
+    wrap.appendChild(btn);
   });
-})();
-
-
-/* V5.3 — a nav some ao descer e volta ao subir, só no celular.
-   Sempre visível no topo da página e sempre visível com o menu aberto. */
-(function () {
-  var nav = document.querySelector('.nav');
-  var toggle = document.querySelector('.nav__toggle');
-  if (!nav) return;
-
-  var mq = window.matchMedia('(max-width: 47.9375em)');
-  var last = window.scrollY;
-  var limite = 320;               /* não esconde antes de sair do topo */
-
-  function tick() {
-    if (!mq.matches) { nav.classList.remove('is-tucked'); last = window.scrollY; return; }
-    if (toggle && toggle.getAttribute('aria-expanded') === 'true') { nav.classList.remove('is-tucked'); return; }
-
-    var y = window.scrollY;
-    if (y < limite) nav.classList.remove('is-tucked');
-    else if (y > last + 6) nav.classList.add('is-tucked');
-    else if (y < last - 6) nav.classList.remove('is-tucked');
-    last = y;
-  }
-
-  window.addEventListener('scroll', tick, { passive: true });
-  mq.addEventListener ? mq.addEventListener('change', tick) : mq.addListener(tick);
 })();

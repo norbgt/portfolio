@@ -464,17 +464,6 @@ button {
   .card + .card { border-top: var(--hair) solid var(--c-divider); }
   .card:nth-child(n + 3) { border-top: var(--hair) solid var(--c-divider); }}
 
-/* -------------------------------------------------------------------------
-   11. Depoimentos
-   ------------------------------------------------------------------------- */
-.testimonials {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
-  gap: clamp(2rem, 1rem + 6vw, 6.25rem);
-  align-items: start;
-}
-.testimonials__title { align-self: start; position: sticky; top: calc(var(--nav-h) + 1rem); }
-
 .quote {
   display: flex;
   flex-direction: column;
@@ -487,10 +476,6 @@ button {
 .quote strong { font-weight: 600; }
 .quote__author { color: var(--c-muted); }
 .quote__author em { font-style: italic; }
-
-@media (max-width: 61.9375em) {
-  .testimonials { grid-template-columns: minmax(0, 1fr); }
-  .testimonials__title { position: static; text-align: left; }}
 
 /* -------------------------------------------------------------------------
    12. Projetos (página Cases)
@@ -1212,14 +1197,6 @@ body { overflow-x: clip; }
    ------------------------------------------------------------------------- */
 
 /* V4.7 — subtítulo do módulo e ajustes de coesão */
-.mod__sub {
-  font-family: var(--f-card-body);
-  font-size: var(--t-micro);
-  letter-spacing: -.02em;
-  color: var(--c-ink);
-  margin-top: -.25rem;
-}
-.mod__sub b { color: var(--c-accent); font-weight: 400; }
 
 /* dentro da trilha os cards da Home perdem as bordas compartilhadas da grade
    e passam a ser objetos independentes — é o que a navegação lateral pede */
@@ -1306,13 +1283,11 @@ body { overflow-x: clip; }
 }
 
 @media (min-width: 48em) {
-  .tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-}
+  .tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }}
 @media (min-width: 62em) {
   /* no desktop as duas listas empilham em largura total: 6 e 10 itens
      numa linha cada, em vez de duas colunas apertadas */
-  .band { grid-template-columns: minmax(0, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
-}
+  .band { grid-template-columns: minmax(0, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }}
 
 /* -------------------------------------------------------------------------
    V5.3  Nav que sai da frente
@@ -1325,8 +1300,7 @@ body { overflow-x: clip; }
   .nav.is-tucked { transform: translateY(-105%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nav { transition: none; }
-}
+  .nav { transition: none; }}
 
 /* -------------------------------------------------------------------------
    V5.4  Coerência final
@@ -1344,5 +1318,205 @@ body { overflow-x: clip; }
 .nav__link  { min-height: var(--tap); }
 @media (max-width: 47.9375em) {
   .nav__brand { padding-block: 0; }
-  .nav__link  { min-height: var(--tap); padding-top: .75rem; }
+  .nav__link  { min-height: var(--tap); padding-top: .75rem; }}
+
+/* =========================================================================
+   V6 — CARTÕES DE NOTA COM ALTURA PADRONIZADA
+   O espaço em branco vinha de os cartões da trilha terem altura igual:
+   abrir um esticava todos, e sobrava vazio no rodapé dos outros. Agora
+   abrem e fecham juntos, e a altura tem piso e teto — a trilha nunca
+   muda de tamanho de forma imprevisível.
+   ========================================================================= */
+:root {
+  --card-min: 11.5rem;   /* piso: 184px — cartão fechado nunca fica raquítico */
+  --card-max: 25rem;     /* teto: 400px — cartão aberto nunca domina a tela  */
 }
+@media (min-width: 62em) {
+  :root { --card-max: 28rem; }}
+
+.ncard {
+  min-height: var(--card-min);
+  max-height: var(--card-max);
+}
+
+/* texto mais longo que o teto rola dentro do próprio cartão, em vez de
+   empurrar a trilha inteira para baixo */
+.ncard__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.ncard__body::-webkit-scrollbar { width: 3px; }
+.ncard__body::-webkit-scrollbar-thumb { background: var(--c-rule); border-radius: var(--r-pill); }
+
+/* o botão fica colado embaixo, fora da área que rola */
+.ncard__more { flex: 0 0 auto; }
+
+/* V6.1 — as listas do currículo perdiam o marcador com o reset global e as
+   frases corriam juntas dentro do cartão. Marcador de traço, no tom das
+   réguas do resto do site. */
+.ncard__list li {
+  position: relative;
+  padding-left: .9rem;
+  margin-bottom: .55rem;
+}
+.ncard__list li:last-child { margin-bottom: 0; }
+.ncard__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: .45rem;
+  height: 1px;
+  background: var(--c-divider);
+}
+
+/* =========================================================================
+   V7 — CONTROLE ÚNICO DA TRILHA E CARTÕES COMPACTOS
+   ========================================================================= */
+
+/* V7.1 — um Read por trilha, flutuando sobre ela.
+   Antes havia um botão em cada cartão: até oito rótulos idênticos na mesma
+   fileira, todos fazendo exatamente a mesma coisa. */
+.mod { position: relative; }
+
+.rail-toggle {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 1.15rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: var(--tap);
+  padding: .5rem 1.05rem;
+  background: var(--c-white);
+  border: var(--hair) solid var(--c-black);
+  border-radius: var(--r-pill);
+  box-shadow: 0 8px 22px -14px rgba(0, 0, 0, .6);
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-accent);
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.rail-toggle::after { content: "↓"; transition: transform var(--dur) var(--ease); }
+.rail-toggle[aria-expanded="true"]::after { transform: rotate(180deg); }
+.rail-toggle:hover,
+.rail-toggle:focus-visible { background: var(--c-black); color: var(--c-white); }
+
+/* sem botão dentro, o corpo do cartão usa o rodapé inteiro */
+.ncard { padding-bottom: 1.125rem; }
+
+/* V7.2 — cartões compactos: Featured work e Where I have worked.
+   A foto tinha proporção 1,29 e o cartão passava de 400px de altura. */
+.rail--compact > li { flex: 0 0 min(64vw, 264px); }
+.rail--compact .card__media { aspect-ratio: 16 / 10; }
+.rail--compact .card__info { gap: .45rem; padding: .9rem 1rem; }
+.rail--compact .card__title { font-size: clamp(1.0625rem, .95rem + .5vw, 1.25rem); }
+.rail--compact .card__desc { font-size: var(--t-micro); }
+.rail--compact .card__tag { padding: .6rem 0 .6rem 1rem; }
+.rail--compact .card__cta { padding: .6rem 1rem; font-size: var(--t-micro); }
+@media (min-width: 62em) { .rail--compact > li { flex: initial; }}
+
+/* V7.3 — o controle flutuante invadia o rodapé do cartão que estivesse
+   embaixo dele na rolagem lateral. Desce para a borda da trilha e o cartão
+   reserva a faixa correspondente, para nenhum texto ficar coberto. */
+.rail-toggle { bottom: .25rem; }
+.ncard { padding-bottom: 2.1rem; }
+
+/* =========================================================================
+   V8 — CONTROLE DA TRILHA: CENTRO INFERIOR, EM VIDRO
+   Sai a borda preta, entra material translúcido. É o único lugar do
+   portfólio onde o vidro faz sentido: um controle que de fato flutua
+   sobre o conteúdo, e cuja função é justamente não competir com ele.
+   ========================================================================= */
+.rail-toggle {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  bottom: .35rem;
+
+  border: 0;
+  background: rgba(255, 255, 255, .62);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 0 0 1px rgba(255, 255, 255, .45),
+    0 6px 18px -10px rgba(20, 20, 45, .35);
+  padding: .55rem 1.15rem;
+  font-weight: 600;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+
+/* o hover escurece o próprio vidro, em vez de trocar de material */
+.rail-toggle:hover,
+.rail-toggle:focus-visible {
+  background: rgba(0, 0, 0, .82);
+  color: var(--c-white);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    0 10px 24px -12px rgba(20, 20, 45, .5);
+}
+.rail-toggle:active { transform: translateX(-50%) scale(.97); }
+
+/* sem backdrop-filter, o vidro vira superfície sólida e ganha o traço de volta */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .rail-toggle {
+    background: var(--c-white);
+    border: var(--hair) solid var(--c-black);
+  }
+}
+/* =========================================================================
+   V9 — TETO DE ALTURA = O MAIOR CARTÃO DO GRUPO
+   O teto fixo de 400px cortava texto e obrigava rolagem dentro do cartão —
+   rolagem vertical aninhada dentro de um carrossel horizontal, que é das
+   interações mais frágeis que existem no toque. Sem teto fixo, o
+   `align-items: stretch` da trilha já iguala todos pelo mais alto: cada
+   grupo passa a ter uma única dimensão, definida pelo seu próprio conteúdo.
+   ========================================================================= */
+.ncard {
+  max-height: none;          /* era var(--card-max) */
+  min-height: var(--card-min);
+}
+.ncard__body {
+  overflow: visible;         /* era auto: nada mais rola por dentro */
+}
+
+/* com o corpo sem rolagem própria, o arrasto horizontal do carrossel
+   nunca é capturado pelo cartão — a trilha responde em qualquer ponto */
+.ncard, .ncard__body { touch-action: pan-x pan-y; }
+
+/* V9.1 — no desktop a trilha vira grade. Com 8 cartões em 4 colunas, cada
+   linha se igualava só dentro de si, e as duas linhas ficavam diferentes.
+   `grid-auto-rows: 1fr` iguala todas as linhas pelo maior cartão do grupo. */
+@media (min-width: 62em) {
+  .rail { grid-auto-rows: 1fr; }
+  .rail > li { height: 100%; }
+}
+
+/* =========================================================================
+   V10 — O CONTROLE DESCE PARA CIMA DA BORDA DO CARTÃO
+   Em vidro, no rodapé interno, ele ainda pousava sobre a última linha de
+   texto do cartão mais alto do grupo (visível no "Independent festival").
+   Agora o centro do botão fica exatamente sobre a borda inferior do
+   cartão: metade dentro, metade fora. Cobre a régua do cartão — que é
+   decoração — e nunca o texto, que é conteúdo.
+   ========================================================================= */
+:root { --rail-pad-b: .5rem; }
+
+/* o botão passa a ser ancorado à trilha (.rail-wrap), e não ao módulo:
+   nem todo módulo tem barra de posição embaixo, e ancorar no módulo fazia
+   o botão subir 20px nos que não têm — foi o que cobriu o texto do
+   "Independent festival". */
+.rail-wrap { position: relative; }
+.rail { padding-bottom: var(--rail-pad-b); }
+
+.rail-toggle {
+  bottom: var(--rail-pad-b);          /* base da trilha = base do cartão */
+  transform: translate(-50%, 50%);    /* metade dentro, metade fora */
+}
+.rail-toggle:active { transform: translate(-50%, 50%) scale(.97); }
