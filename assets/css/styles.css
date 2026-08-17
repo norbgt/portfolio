@@ -50,15 +50,24 @@
   --r-sm: 4px;      /* peças pequenas: tiles, tags */
   --r-pill: 999px;  /* pílulas */
 
-  /* Movimento — uma duração base, uma lenta, uma curva */
-  --dur: var(--dur);
-  --dur-slow: var(--dur-slow);
+  /* Movimento — uma duração base, uma lenta, uma curva.
+     V11: estes cinco tokens estavam definidos como eles mesmos
+     (--dur: var(--dur)), o que os torna inválidos. Com --dur inválido,
+     toda declaração `transition` que o usava era descartada: o site
+     inteiro estava sem transição, e a bolinha verde do status ficava
+     sem cor. */
+  --dur: 200ms;
+  --dur-slow: 380ms;
   --ease: cubic-bezier(.2, .7, .2, 1);
 
   /* Superfícies de estado */
-  --c-hover: var(--c-hover);                  /* fundo de linha/cartão sob o cursor */
-  --c-rule: var(--c-rule);     /* régua fraca entre itens de lista */
-  --c-ok: var(--c-ok);                     /* status entregue */
+  --c-hover: #f4f4f4;          /* fundo de linha/cartão sob o cursor */
+  --c-rule:  #ededed;          /* régua fraca entre itens de lista */
+
+  /* Status de projeto — bolinhas em tom pastel */
+  --c-run:  #8ea4f2;           /* em andamento */
+  --c-ok:   #86c6a0;           /* concluído    */
+  --c-off:  #c6c6c6;           /* despriorizado */
 }
 
 /* -------------------------------------------------------------------------
@@ -542,11 +551,11 @@ button {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--c-accent);
+  background: var(--c-run);
   flex: 0 0 auto;
 }
 .tag--done::before { background: var(--c-ok); }
-.tag--off::before  { background: var(--c-muted); }
+.tag--off::before  { background: var(--c-off); }
 
 .rows { display: flex; flex-direction: column; }
 
@@ -1096,6 +1105,9 @@ body { overflow-x: clip; }
 @media (min-width: 62em) {
   .rail {
     display: grid;
+    /* V11: entre 62em e 75em, quatro colunas deixam cada cartão com ~220px —
+       estreito demais para o título caber em uma linha. Nessa faixa a grade
+       cai para três; acima dela volta ao número declarado na seção. */
     grid-template-columns: repeat(var(--rail-cols, 3), minmax(0, 1fr));
     gap: clamp(1rem, .5rem + 1.4vw, 1.5rem);
     overflow: visible;
@@ -1167,7 +1179,14 @@ body { overflow-x: clip; }
 .rail .pcard { border: var(--hair) solid var(--c-divider); border-radius: var(--r-xs); overflow: hidden; height: 100%; }
 .rail .pcard__l {
   grid-template-columns: minmax(0, 1fr);
+  /* V11.4: com linhas automáticas, a grade distribuía a altura sobrando
+     entre imagem e texto. O cartão de texto curto ganhava uma faixa vazia
+     sob a imagem e empurrava todo o corpo para baixo — por isso a numeração
+     de um cartão nascia 25px abaixo da do vizinho. Agora a imagem tem a
+     altura do seu conteúdo e toda a sobra vai para o corpo. */
+  grid-template-rows: max-content minmax(0, 1fr);
   align-items: start;
+  align-content: start;
   gap: .875rem;
   padding: 0 0 1.125rem;
   height: 100%;
@@ -1216,8 +1235,12 @@ body { overflow-x: clip; }
     border: var(--hair) solid var(--c-divider);
     gap: 0;
   }
+  /* V11.3: o último cartão mantém a borda, só que invisível. Removê-la
+     deixava esse cartão 1px mais largo por dentro — e, com aspect-ratio,
+     a imagem dele ficava meio pixel mais alta que a dos vizinhos, jogando
+     título e descrição para fora do alinhamento da fileira. */
   .rail[aria-label="Featured work"] > li:last-child .card,
-  .rail[aria-label="Where I have worked"] > li:last-child .card { border-right: 0; }
+  .rail[aria-label="Where I have worked"] > li:last-child .card { border-right-color: transparent; }
 }
 /* =========================================================================
    V5 — PADRONIZAÇÃO
@@ -1520,3 +1543,76 @@ body { overflow-x: clip; }
   transform: translate(-50%, 50%);    /* metade dentro, metade fora */
 }
 .rail-toggle:active { transform: translate(-50%, 50%) scale(.97); }
+
+
+/* V11.2 — a imagem do cartão não encolhe.
+   Como .card é flex-column, a mídia era um item flexível: nos cartões com
+   descrição mais longa ela cedia meio pixel para acomodar o texto, e o
+   título do vizinho ficava meio pixel acima. Meio pixel é invisível, mas
+   quebrava o alinhamento entre os cartões da mesma fileira. */
+.card__media, .rail--compact .card__media { flex: 0 0 auto; }
+
+/* V11.1 — teto de três colunas na faixa estreita do desktop.
+   Entre 62em e 75em, quatro colunas deixam cada cartão com cerca de 200px
+   de texto: estreito demais para "Service & Product Designer" caber em uma
+   linha em qualquer corpo razoável. Três colunas resolvem sem encolher a
+   tipografia. Acima de 75em volta ao número declarado na seção. */
+@media (min-width: 62em) and (max-width: 74.99em) {
+  .rail[aria-label="Corporate experience"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================================
+   V12 — UMA SEÇÃO SÓ PARA A TRAJETÓRIA
+   “Where I have worked” e “Corporate experience” descreviam as mesmas três
+   empresas na mesma página, com 250 palavras entre uma e outra. Agora é um
+   cartão por cargo: a foto e o resumo curto vinham da primeira seção, as
+   datas e os marcadores da segunda, e o Read abre o texto longo.
+   ========================================================================= */
+.ncard__media {
+  aspect-ratio: 16 / 10;
+  background: var(--c-surface-alt);
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  margin-bottom: .35rem;
+  flex: 0 0 auto;
+}
+.ncard__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* o resumo é a linha que se lê com o cartão fechado */
+.ncard__lead {
+  font-family: var(--f-card-body);
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+
+/* =========================================================================
+   V12.1 — DEPOIMENTO COM FRASE CURTA NA TELA E ÍNTEGRA A UM CLIQUE
+   Cortar um depoimento a 75 caracteres o transforma em slogan. A frase
+   curta é literal de quem escreveu, e o texto inteiro continua a um clique.
+   ========================================================================= */
+.quote__lead {
+  font-family: var(--f-condensed);
+  font-weight: 600;
+  font-size: clamp(1.125rem, 1rem + .6vw, 1.375rem);
+  line-height: 1.25;
+  letter-spacing: -.02em;
+}
+.quote .ncard__body { margin-top: .75rem; }
+.quote .ncard__body p + p { margin-top: .6rem; }
+
+/* V13 — a data de atualização no rodapé.
+   O hero diz que o portfólio está sempre evoluindo; a data é a prova disso. */
+.footer__upd {
+  display: block;
+  margin-top: .15rem;
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  color: var(--c-muted);
+}
+@media (min-width: 48em) {
+  .footer__upd { display: inline; margin-top: 0; margin-left: .6rem; }
+}

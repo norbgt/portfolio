@@ -253,7 +253,7 @@
   var n = 0;
 
   document.querySelectorAll('[data-rail]').forEach(function (rail) {
-    var cards = rail.querySelectorAll('.ncard');
+    var cards = rail.querySelectorAll('.ncard, .quote');   /* V12.1: depoimentos também abrem */
     if (!cards.length) return;
 
     var ids = [];
@@ -312,4 +312,83 @@
     }
     wrap.appendChild(btn);
   });
+})();
+
+/* =========================================================================
+   V11 — UMA LINHA POR TÍTULO E LINHAS CORRESPONDENTES ALINHADAS
+   Dois problemas do mesmo tipo. (1) Alguns títulos quebravam em duas linhas
+   no celular, e o mesmo título cabia em uma linha num aparelho maior — o
+   cartão mudava de forma conforme o aparelho. (2) Dentro de um grupo, um
+   cartão tinha a descrição em 3 linhas e o vizinho em 4: as linhas
+   correspondentes não se encontravam, e a fileira parecia desalinhada.
+   A correção é medida, não chutada: para cada trilha, o título encolhe
+   até o maior deles caber em uma linha, e cada faixa de informação
+   reserva o número de linhas da mais alta do grupo.
+   ========================================================================= */
+(function () {
+  var FAIXAS = ['.ncard__tag, .card__tag, .pcard__n',
+                '.ncard__t, .card__title, .pcard__t',
+                '.ncard__m, .card__desc, .pcard__o',
+                '.pcard__m'];
+  /* o título dos cartões de case é tipografia de display: encolhê-lo para
+     caber em uma linha só faz sentido no celular, onde a coluna é estreita */
+  var ESTREITO = window.matchMedia('(max-width: 61.99em)');
+
+  function extras(cs) {
+    return parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) +
+           parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+  }
+  function metrica(el) {
+    var cs = getComputedStyle(el);
+    var lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2;
+    var h  = el.getBoundingClientRect().height - extras(cs);
+    return { linhas: Math.max(1, Math.round(h / lh)), lh: lh, extras: extras(cs) };
+  }
+
+  function ajustar(trilha) {
+    /* 1. título: um só tamanho por grupo, o maior que mantém todos em uma linha */
+    var sel = '.ncard__t, .card__title' + (ESTREITO.matches ? ', .pcard__t' : '');
+    var titulos = Array.prototype.slice.call(trilha.querySelectorAll(sel));
+    Array.prototype.forEach.call(
+      trilha.querySelectorAll('.pcard__t'), function (t) { t.style.fontSize = ''; });
+    titulos.forEach(function (t) { t.style.fontSize = ''; });
+    if (titulos.length) {
+      var base = parseFloat(getComputedStyle(titulos[0]).fontSize);
+      var piso = base * 0.72;
+      var fs = base;
+      var cabe = function () {
+        return titulos.every(function (t) { return metrica(t).linhas === 1; });
+      };
+      while (fs > piso && !cabe()) {
+        fs -= 0.5;
+        titulos.forEach(function (t) { t.style.fontSize = fs + 'px'; });
+      }
+    }
+
+    /* 2. cada faixa reserva as linhas da mais alta do grupo */
+    FAIXAS.forEach(function (sel) {
+      var els = Array.prototype.slice.call(trilha.querySelectorAll(sel));
+      els.forEach(function (e) { e.style.minHeight = ''; });
+      if (els.length < 2) return;
+      var max = 0, lh = 0;
+      els.forEach(function (e) {
+        var m = metrica(e);
+        if (m.linhas > max) max = m.linhas;
+        if (m.lh > lh) lh = m.lh;
+      });
+      if (!lh) return;
+      els.forEach(function (e) {
+        e.style.minHeight = (max * lh + metrica(e).extras) + 'px';
+      });
+    });
+  }
+
+  var trilhas = document.querySelectorAll('[data-rail]');
+  function rodar() { Array.prototype.forEach.call(trilhas, ajustar); }
+
+  rodar();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(rodar);
+  addEventListener('load', rodar);
+  var t;
+  addEventListener('resize', function () { clearTimeout(t); t = setTimeout(rodar, 150); });
 })();
