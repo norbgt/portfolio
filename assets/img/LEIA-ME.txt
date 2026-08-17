@@ -1,0 +1,2 @@
+# Coloque aqui as imagens exportadas do Figma.
+# Veja a lista de nomes no README.md

@@ -44,6 +44,21 @@
   /* Traços */
   --hair: 1px;
   --tap: 44px;
+
+  /* Raios — três degraus, nada além disso */
+  --r-xs: 2px;      /* cartões, botões, blocos de mídia */
+  --r-sm: 4px;      /* peças pequenas: tiles, tags */
+  --r-pill: 999px;  /* pílulas */
+
+  /* Movimento — uma duração base, uma lenta, uma curva */
+  --dur: var(--dur);
+  --dur-slow: var(--dur-slow);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+
+  /* Superfícies de estado */
+  --c-hover: var(--c-hover);                  /* fundo de linha/cartão sob o cursor */
+  --c-rule: var(--c-rule);     /* régua fraca entre itens de lista */
+  --c-ok: var(--c-ok);                     /* status entregue */
 }
 
 /* -------------------------------------------------------------------------
@@ -65,8 +80,7 @@ html {
   *, *::before, *::after {
     animation-duration: .001ms !important;
     transition-duration: .001ms !important;
-  }
-}
+  }}
 
 body {
   margin: 0;
@@ -102,7 +116,7 @@ button {
 :focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-xs);
 }
 
 .skip-link {
@@ -230,7 +244,7 @@ button {
   width: 22px;
   height: 1.5px;
   background: var(--c-black);
-  transition: transform .22s ease, opacity .18s ease;
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
 }
 .nav__toggle .bars { position: relative; }
 .nav__toggle .bars::before,
@@ -280,8 +294,7 @@ button {
   }
   .nav__link:last-child { border-bottom: 0; }
   .nav { border-bottom: var(--hair) solid var(--c-black); padding-bottom: .625rem; }
-  .nav__inner { position: relative; }
-}
+  .nav__inner { position: relative; }}
 
 /* -------------------------------------------------------------------------
    5. Hero
@@ -334,13 +347,6 @@ button {
 }
 .intro__text strong { font-weight: 500; }
 
-.intro__prose {
-  font-size: clamp(1.0625rem, 1rem + .5vw, 1.375rem);
-  line-height: 1.4;
-  letter-spacing: -.02em;
-  max-width: 90ch;
-}
-
 /* -------------------------------------------------------------------------
    7. Rótulo de seção ("Featured work", "Consulting projects"…)
    ------------------------------------------------------------------------- */
@@ -363,17 +369,6 @@ button {
   text-align: center;
 }
 .section-title--start { text-align: left; }
-
-/* -------------------------------------------------------------------------
-   8. Cards de destaque (Highlights)
-   ------------------------------------------------------------------------- */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border: var(--hair) solid var(--c-divider);
-  border-radius: 2px;
-  overflow: hidden;
-}
 
 .card {
   display: flex;
@@ -455,120 +450,19 @@ button {
   white-space: nowrap;
   flex: 0 0 auto;
   min-height: var(--tap);
-  transition: background-color .18s ease, color .18s ease;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .card__cta:hover,
 .card__cta:focus-visible { background: var(--c-black); color: var(--c-white); }
 
 @media (max-width: 61.9375em) {
-  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card:nth-child(2n + 1) { border-left: 0; }
-  .card:nth-child(n + 3) { border-top: var(--hair) solid var(--c-divider); }
-}
-
-@media (max-width: 39.9375em) {
-  .cards { grid-template-columns: minmax(0, 1fr); }
-  .card { border-left: 0; }
-  .card + .card { border-top: var(--hair) solid var(--c-divider); }
-  .card:nth-child(n + 3) { border-top: var(--hair) solid var(--c-divider); }
-}
-
-/* -------------------------------------------------------------------------
-   9. Skills & Clients
-   ------------------------------------------------------------------------- */
-.chips {
-  display: grid;
-  gap: clamp(.75rem, .4rem + 1.5vw, 2rem);
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  justify-content: center;
-}
-.chips--clients { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 1rem; }
-
-.chip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1.5rem 1rem;
-  border: var(--hair) solid var(--c-black);
-  border-radius: 4px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1.5;
-  letter-spacing: -.02em;
-  min-height: 80px;
-}
-.chip .icon { width: 2.5rem; height: 2.5rem; }
-.chips--clients .chip { padding: 1.25rem .75rem; min-height: var(--tap); }
-
-@media (max-width: 39.9375em) {
-  .chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .chips--clients { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .chip { font-size: .9375rem; padding: 1.125rem .5rem; gap: .75rem; }
-  .chip .icon { width: 2rem; height: 2rem; }
-}
-
-/* -------------------------------------------------------------------------
-   10. Linhas de currículo (experiência / educação / cases por indústria)
-   ------------------------------------------------------------------------- */
-.record-group { display: flex; flex-direction: column; gap: clamp(2rem, 1.4rem + 3vw, 3.125rem); }
-
-.record-block {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.5rem, 1.1rem + 2vw, 2.3125rem);
-  padding-block: clamp(1.5rem, 1rem + 2.5vw, 2.5rem);
-}
-.record-block--ruled { border-top: var(--hair) solid var(--c-ink); }
-
-.record {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.6fr);
-  gap: clamp(1rem, .6rem + 2vw, 1.875rem);
-  border-top: 1px solid rgba(36, 36, 36, .55);
-  padding-top: 1.25rem;
-}
-
-.record__head { display: flex; flex-direction: column; gap: .75rem; }
-
-.record__role {
-  font-size: var(--t-body);
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--c-ink);
-}
-
-.record__meta {
-  display: flex;
-  flex-direction: column;
-  gap: .125rem;
-  font-size: var(--t-meta);
-  line-height: 1.4;
-  letter-spacing: -.01em;
-}
-.record__meta a { text-decoration: none; }
-.record__meta a:hover { text-decoration: underline; }
-.record__meta strong { font-weight: 500; }
-
-.record__body {
-  font-size: var(--t-body);
-  line-height: 1.55;
-  color: var(--c-ink);
-}
-.record__body li {
-  list-style: disc;
-  margin-left: 1.25rem;
-  margin-bottom: .5rem;
-}
-.record__body li:last-child { margin-bottom: 0; }
-.record__body strong { font-weight: 500; }
-.record__body p + p { margin-top: .75rem; }
+  .card:nth-child(n + 3) { border-top: var(--hair) solid var(--c-divider); }}
 
 @media (max-width: 47.9375em) {
-  .record { grid-template-columns: minmax(0, 1fr); gap: .875rem; }
-}
+  .card { border-left: 0; }
+  .card + .card { border-top: var(--hair) solid var(--c-divider); }
+  .card:nth-child(n + 3) { border-top: var(--hair) solid var(--c-divider); }}
 
 /* -------------------------------------------------------------------------
    11. Depoimentos
@@ -580,8 +474,6 @@ button {
   align-items: start;
 }
 .testimonials__title { align-self: start; position: sticky; top: calc(var(--nav-h) + 1rem); }
-
-.quotes { display: flex; flex-direction: column; gap: clamp(2.5rem, 1.5rem + 4vw, 5rem); }
 
 .quote {
   display: flex;
@@ -598,8 +490,7 @@ button {
 
 @media (max-width: 61.9375em) {
   .testimonials { grid-template-columns: minmax(0, 1fr); }
-  .testimonials__title { position: static; text-align: left; }
-}
+  .testimonials__title { position: static; text-align: left; }}
 
 /* -------------------------------------------------------------------------
    12. Projetos (página Cases)
@@ -654,7 +545,7 @@ button {
   min-height: 24px;
   padding: .25rem .625rem;
   border: var(--hair) solid var(--c-line-soft);
-  border-radius: 16px;
+  border-radius: var(--r-pill);
   background: var(--c-white);
   box-shadow: .5px 1px .5px rgba(221, 221, 221, .25);
   font-size: var(--t-meta);
@@ -669,7 +560,7 @@ button {
   background: var(--c-accent);
   flex: 0 0 auto;
 }
-.tag--done::before { background: #12a150; }
+.tag--done::before { background: var(--c-ok); }
 .tag--off::before  { background: var(--c-muted); }
 
 .rows { display: flex; flex-direction: column; }
@@ -724,8 +615,7 @@ button {
 
 @media (max-width: 61.9375em) {
   .project { grid-template-columns: minmax(0, 1fr); }
-  .project__aside { position: static; }
-}
+  .project__aside { position: static; }}
 
 /* -------------------------------------------------------------------------
    13. Rodapé
@@ -761,7 +651,6 @@ button {
 @media (max-width: 47.9375em) and (pointer: coarse), (max-width: 47.9375em) {
   .nav__brand { padding-block: .625rem; }
 
-  .record__meta a,
   .field__value a {
     display: inline-flex;
     align-items: center;
@@ -792,7 +681,7 @@ button {
   inset: 0;
   background: var(--c-surface-alt);
   opacity: 1;
-  transition: opacity .3s ease;
+  transition: opacity var(--dur-slow) var(--ease);
   pointer-events: none;
 }
 .card__media.is-loaded::after,
@@ -801,7 +690,659 @@ button {
 .card__media img,
 .row__media img {
   opacity: 0;
-  transition: opacity .3s ease;
+  transition: opacity var(--dur-slow) var(--ease);
 }
 .card__media.is-loaded img,
 .row__media.is-loaded img { opacity: 1; }
+
+/* =========================================================================
+   V2 — REDISTRIBUIÇÃO
+   Mesmo conteúdo, mesmo design system. Muda hierarquia, ordem de leitura,
+   densidade e navegação. Cada bloco abaixo responde a uma medição do
+   diagnóstico (diagnostico.html).
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   V2.1  Ritmo vertical
+   Na v1 o hero + a frase de posicionamento somam 4,3% da Home no celular,
+   enquanto os chips de Skills/Clients ocupam 9,5%. A identidade recebia
+   menos espaço que a decoração. Aqui o vazio decorativo encolhe e o
+   primeiro trabalho sobe na página.
+   ------------------------------------------------------------------------- */
+:root {
+  --block-gap: clamp(3.5rem, 2rem + 7.5vw, 10rem);   /* era até 240px */
+}
+.intro--loose { padding-bottom: clamp(2rem, 1.2rem + 3.5vw, 4.5rem); } /* era até 120px */
+
+.hero { gap: clamp(1rem, .6rem + 1.6vw, 1.75rem); }
+.hero__title { max-width: 16ch; }
+
+/* -------------------------------------------------------------------------
+   V2.2  Faixa Skills + Clients
+   Eram duas seções empilhadas, com título centralizado — os únicos
+   elementos centralizados do site, quebrando o eixo de 80px que todo o
+   resto respeita. Viram uma faixa de duas colunas, alinhada à esquerda.
+   ------------------------------------------------------------------------- */
+.band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 1rem + 4vw, 4rem);
+  align-items: start;
+}
+.band__col { display: flex; flex-direction: column; gap: clamp(1.25rem, .8rem + 2vw, 2rem); }
+
+@media (max-width: 47.9375em) {
+  .band { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }}
+
+/* -------------------------------------------------------------------------
+   V2.3  Depoimentos em duas colunas no desktop
+   Eram dois blocos de ~200 palavras empilhados numa coluna de 621px.
+   Lado a lado, viram comparação em vez de fila.
+   ------------------------------------------------------------------------- */
+@media (min-width: 62em) {
+  .quote { font-size: 1.0625rem; }
+}
+
+/* -------------------------------------------------------------------------
+   V2.6  "Big numbers" com peso de número
+   O texto é o mesmo. O que muda é que 27 pain points deixa de ser uma
+   linha de 14px igual a todas as outras.
+   ------------------------------------------------------------------------- */
+.field--stats .field__value {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: .875rem 1.25rem;
+  border-top: var(--hair) solid var(--c-rule);
+  padding-top: .875rem;
+}
+.field--stats .field__value > span {
+  display: block;
+  font-size: var(--t-meta);
+  line-height: 1.3;
+  color: var(--c-ink);
+}
+.field--stats .field__value > span > b {
+  display: block;
+  font-family: var(--f-condensed);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--c-black);
+  margin-bottom: .2rem;
+}
+
+/* -------------------------------------------------------------------------
+   V2.7  Imagens dos cases: toque para ampliar
+   No celular elas são exibidas a 25,2% do tamanho nativo (349px de 1388px).
+   Um rótulo de 12px do quadro vira 3px na tela — existe, mas não se lê.
+   ------------------------------------------------------------------------- */
+.row__media { cursor: zoom-in; position: relative; }
+.row__media::before {
+  content: "Tap to enlarge";
+  position: absolute;
+  z-index: 2;
+  right: .625rem; bottom: .625rem;
+  background: rgba(0, 0, 0, .82);
+  color: #fff;
+  font-family: var(--f-card-body);
+  font-size: .6875rem;
+  letter-spacing: -.02em;
+  padding: .375rem .625rem;
+  border-radius: var(--r-xs);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+.row__media.is-loaded:hover::before { opacity: 1; }
+@media (hover: none) {
+  .row__media.is-loaded::before { content: "Tap to enlarge"; opacity: .92; }}
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(255, 255, 255, .985);
+  display: flex;
+  flex-direction: column;
+  padding: max(.75rem, env(safe-area-inset-top)) .75rem max(.75rem, env(safe-area-inset-bottom));
+  gap: .625rem;
+}
+.viewer[hidden] { display: none; }
+.viewer__bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.viewer__cap {
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-ink);
+  min-width: 0;
+}
+.viewer__close {
+  flex: 0 0 auto;
+  width: var(--tap); height: var(--tap);
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-xs);
+  font-size: 1.25rem; line-height: 1;
+  background: var(--c-white);
+}
+.viewer__close:hover { background: var(--c-black); color: var(--c-white); }
+.viewer__frame {
+  flex: 1 1 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border: var(--hair) solid var(--c-divider);
+  background: var(--c-surface-alt);
+}
+.viewer__frame img { width: auto; max-width: none; height: auto; display: block; }
+.viewer__hint {
+  font-family: var(--f-card-body);
+  font-size: .6875rem;
+  color: var(--c-ink);
+  text-align: center;
+}
+
+/* -------------------------------------------------------------------------
+   V2.8  Progresso de leitura e volta ao topo
+   Home tem 10,6 telas no celular; Cases, 15. Nenhuma das duas dizia onde
+   você está nem oferecia caminho de volta.
+   ------------------------------------------------------------------------- */
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 150;
+  background: transparent;
+  pointer-events: none;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--c-accent);
+  transition: width var(--dur) linear;
+}
+
+.to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: max(clamp(1rem, 3vw, 2rem), env(safe-area-inset-bottom));
+  z-index: 140;
+  width: var(--tap); height: var(--tap);
+  border: var(--hair) solid var(--c-black);
+  border-radius: 50%;
+  background: var(--c-white);
+  font-size: 1.125rem; line-height: 1;
+  box-shadow: 0 6px 18px -10px rgba(0, 0, 0, .6);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+.to-top[hidden] { display: none; }
+.to-top.is-on { opacity: 1; transform: none; }
+.to-top:hover { background: var(--c-black); color: var(--c-white); }
+
+/* -------------------------------------------------------------------------
+   V2.9  "Cases by industry" ocupa 25,5% da página Cases no celular
+   (3.256px = 3,8 telas) — o maior bloco da página é uma seção de apoio,
+   maior que qualquer case real. No celular vira divulgação progressiva:
+   empresa, papel e ano sempre visíveis, o parágrafo a um toque.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   V2.5  Ordem de leitura dos cases
+   Medição da v1: cada projeto abre com 431–651px de metadados (Overview,
+   What we did, My role, Status, Big numbers) antes da primeira imagem —
+   até uma tela inteira de texto no celular.
+   Aqui a coluna lateral usa `display: contents` no celular, o que solta
+   título e campos como irmãos diretos do bloco. Aí a ordem vira
+   título → prova visual → metadados, sem duplicar nada no HTML.
+   No desktop ela volta a ser uma coluna só, grudada durante a rolagem.
+
+   Nota: `overflow-x: hidden` no body faz do body um contêiner de rolagem
+   e quebra position:sticky nos descendentes. `clip` corta o estouro sem
+   criar contêiner, então o sticky volta a funcionar.
+   ------------------------------------------------------------------------- */
+body { overflow-x: clip; }
+@supports not (overflow: clip) { body { overflow-x: hidden; }}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, .8rem + .8vw, 1.25rem);
+  align-items: stretch;
+}
+.project__aside { display: contents; }
+.project .project__title { order: 0; }
+.project .rows          { order: 1; }
+.project .field         { order: 2; }
+
+@media (min-width: 62em) {
+  .project {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 1.45fr);
+    column-gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: start;
+  }
+  .project__aside {
+    display: flex;
+    flex-direction: column;
+    gap: .95rem;
+    position: sticky;
+    top: calc(var(--nav-h) + .75rem);
+    background: var(--c-white);
+    padding-bottom: .5rem;
+  }
+  .project .rows { order: 0; }}
+
+/* faixa de identificação da versão de estudo — some ao imprimir */
+.v2flag{
+  margin:0;
+  background:var(--c-black);
+  color:#fff;
+  font-family:var(--f-card-body);
+  font-size:.6875rem;
+  letter-spacing:-.02em;
+  text-align:center;
+  padding:.45rem 1rem;
+}
+.v2flag a{color:#fff}
+@media print{.v2flag{display:none}}
+.pcard { border-bottom: var(--hair) solid var(--c-divider); }
+.pcard__l {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: clamp(1rem, .6rem + 2vw, 2rem);
+  align-items: center;
+  padding: clamp(1rem, .7rem + 1.4vw, 1.5rem) .25rem;
+  text-decoration: none;
+  transition: background-color var(--dur) var(--ease), padding-left var(--dur) var(--ease);
+}
+.pcard__l:hover, .pcard__l:focus-visible { background: var(--c-hover); padding-left: .75rem; }
+.pcard__media {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--c-surface-alt);
+  border: var(--hair) solid var(--c-divider);
+  overflow: hidden;
+}
+.pcard__media img { width: 100%; height: 100%; object-fit: cover; }
+.pcard__b { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.pcard__n {
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-accent);
+}
+.pcard__t {
+  font-family: var(--f-condensed);
+  font-weight: 600;
+  font-size: clamp(1.375rem, 1.1rem + 1.4vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+.pcard__o { font-size: var(--t-meta); line-height: 1.45; color: var(--c-ink); max-width: 56ch; }
+.pcard__m { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .25rem; }
+.pcard__cy { font-size: var(--t-meta); color: var(--c-muted); }
+
+@media (max-width: 47.9375em) {
+  .pcard__l { grid-template-columns: minmax(0, 1fr); gap: .875rem; }}
+
+/* -------------------------------------------------------------------------
+   V3.2  Migalha e navegação entre cases
+   Cada projeto virou página própria. Sem isso não há como saber onde
+   você está nem como chegar no próximo sem voltar ao índice.
+   ------------------------------------------------------------------------- */
+.crumb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-block: .5rem 1.5rem;
+  font-size: var(--t-meta);
+  color: var(--c-muted);
+}
+.crumb a { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tap); color: var(--c-black); }
+.crumb a:hover { text-decoration: underline; }
+
+.pn {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--c-divider);
+  border: var(--hair) solid var(--c-divider);
+}
+.pn__i {
+  background: var(--c-white);
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  padding: clamp(1rem, .7rem + 1.4vw, 1.5rem);
+  min-height: calc(var(--tap) * 1.6);
+  text-decoration: none;
+  transition: background-color var(--dur) var(--ease);
+}
+.pn__i:hover, .pn__i:focus-visible { background: var(--c-hover); }
+.pn__i--n { text-align: right; align-items: flex-end; }
+.pn__i span { font-family: var(--f-card-body); font-size: var(--t-micro); letter-spacing: -.02em; color: var(--c-accent); }
+.pn__i b {
+  font-family: var(--f-condensed);
+  font-weight: 600;
+  font-size: clamp(1.0625rem, .95rem + .6vw, 1.375rem);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+}
+
+@media (max-width: 47.9375em) {
+  .pn { grid-template-columns: minmax(0, 1fr); }
+  .pn__i--n { text-align: left; align-items: flex-start; }}
+
+/* =========================================================================
+   V4 — MODULARIZAÇÃO HORIZONTAL
+   Um componente só, .rail, usado em todo o portfólio: no celular vira
+   navegação lateral com encaixe; no desktop volta a ser grade. A regra é
+   sempre a mesma — itens comparáveis se navegam de lado, texto longo fica
+   atrás de um "Read". Isso troca metros de rolagem vertical por módulos.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   V4.1  Cabeçalho de módulo: rótulo + contador
+   ------------------------------------------------------------------------- */
+.mod { display: flex; flex-direction: column; gap: clamp(1rem, .7rem + 1.4vw, 1.5rem); }
+.mod__h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: var(--hair) solid var(--c-black);
+  padding-bottom: .75rem;
+}
+.mod__c {
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.mod__c b { color: var(--c-black); font-weight: 400; }
+.mod__intro {
+  font-size: clamp(1rem, .95rem + .4vw, 1.25rem);
+  line-height: 1.4;
+  letter-spacing: -.02em;
+  max-width: 68ch;
+  color: var(--c-ink);
+}
+
+/* -------------------------------------------------------------------------
+   V4.2  A trilha
+   ------------------------------------------------------------------------- */
+.rail {
+  display: flex;
+  gap: .875rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--gutter);
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  padding-bottom: .25rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  list-style: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail > li {
+  flex: 0 0 min(80vw, 330px);
+  scroll-snap-align: start;
+  display: flex;
+}
+.rail > li > * { width: 100%; }
+
+/* barra de posição — 8 itens em bolinhas viram sujeira; barra escala melhor */
+.rail__bar { height: 2px; background: var(--c-line); position: relative; }
+.rail__bar span {
+  position: absolute; inset: 0 auto 0 0;
+  background: var(--c-black);
+  width: 30%;
+  transition: transform var(--dur) linear, width var(--dur) var(--ease);
+}
+
+@media (min-width: 62em) {
+  .rail {
+    display: grid;
+    grid-template-columns: repeat(var(--rail-cols, 3), minmax(0, 1fr));
+    gap: clamp(1rem, .5rem + 1.4vw, 1.5rem);
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  .rail > li { flex: initial; }
+  .mod__c, .rail__bar { display: none; }}
+
+/* -------------------------------------------------------------------------
+   V4.3  Cartão de nota — usado em Inside the design team, By industry,
+   Early career e nos registros de currículo da Home. Mesmo objeto em toda
+   parte, com o "Read" em azul revelando o texto longo.
+   ------------------------------------------------------------------------- */
+.ncard {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-xs);
+  padding: 1.125rem;
+  background: var(--c-white);
+  height: 100%;
+}
+.ncard__tag {
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-accent);
+}
+.ncard__t {
+  font-family: var(--f-condensed);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+}
+.ncard__m { font-size: var(--t-meta); color: var(--c-muted); line-height: 1.4; }
+.ncard__m a { color: inherit; text-decoration: none; }
+.ncard__m a:hover { color: var(--c-black); text-decoration: underline; }
+.ncard__body {
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  color: var(--c-ink);
+  margin-top: .25rem;
+}
+.ncard__body p + p { margin-top: .6rem; }
+.ncard__body[hidden] { display: none; }
+.ncard__more {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: .75rem;
+  min-height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-accent);
+}
+.ncard__more::after { content: "↓"; transition: transform var(--dur) var(--ease); }
+.ncard__more[aria-expanded="true"]::after { transform: rotate(180deg); }
+.ncard__more:hover { text-decoration: underline; }
+
+/* -------------------------------------------------------------------------
+   V4.4  Cartão de case dentro da trilha
+   ------------------------------------------------------------------------- */
+.rail .pcard { border: var(--hair) solid var(--c-divider); border-radius: var(--r-xs); overflow: hidden; height: 100%; }
+.rail .pcard__l {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: .875rem;
+  padding: 0 0 1.125rem;
+  height: 100%;
+}
+.rail .pcard__l:hover, .rail .pcard__l:focus-visible { padding-left: 0; background: var(--c-hover); }
+.rail .pcard__media { border: 0; border-bottom: var(--hair) solid var(--c-divider); aspect-ratio: 16/10; }
+.rail .pcard__b { padding-inline: 1.125rem; }
+.rail .pcard__o { font-size: var(--t-meta); }
+
+/* -------------------------------------------------------------------------
+   V4.5  Depoimentos também viram trilha no celular
+   ------------------------------------------------------------------------- */
+.rail .quote {
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-xs);
+  padding: 1.25rem;
+  height: 100%;
+  font-size: 1rem;
+  gap: 1rem;
+}
+@media (min-width: 62em) { .rail .quote { border: 0; padding: 0; }}
+
+/* -------------------------------------------------------------------------
+   V4.6  Currículo com a mesma regra de divulgação
+   Corporate experience e Education usam o mesmo "Read" azul. A entrada
+   mais recente já vem aberta — é a que importa para quem está avaliando.
+   ------------------------------------------------------------------------- */
+
+/* V4.7 — subtítulo do módulo e ajustes de coesão */
+.mod__sub {
+  font-family: var(--f-card-body);
+  font-size: var(--t-micro);
+  letter-spacing: -.02em;
+  color: var(--c-ink);
+  margin-top: -.25rem;
+}
+.mod__sub b { color: var(--c-accent); font-weight: 400; }
+
+/* dentro da trilha os cards da Home perdem as bordas compartilhadas da grade
+   e passam a ser objetos independentes — é o que a navegação lateral pede */
+.rail .card {
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  height: 100%;
+}
+.rail .card__media { border-bottom: var(--hair) solid var(--c-divider); }
+.rail .card__details { margin-top: auto; }
+
+/* no desktop a Home volta à grade colada do Figma, sem bordas duplicadas */
+@media (min-width: 62em) {
+  .rail .card { border-radius: 0; border-left: 0; border-top: 0; border-bottom: 0; border-right: var(--hair) solid var(--c-divider); }
+  .rail[aria-label="Featured work"], .rail[aria-label="Where I have worked"] {
+    border: var(--hair) solid var(--c-divider);
+    gap: 0;
+  }
+  .rail[aria-label="Featured work"] > li:last-child .card,
+  .rail[aria-label="Where I have worked"] > li:last-child .card { border-right: 0; }
+}
+/* =========================================================================
+   V5 — PADRONIZAÇÃO
+   Skills e Clients compactos, na linguagem que o portfólio já usa:
+   traço de 1px, raio da escala, sem material novo.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   V5.1  Skills — ícone + rótulo, três por linha no celular
+   Antes: 6 chips de 186px em duas colunas, 482px de altura.
+   ------------------------------------------------------------------------- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .5rem;
+  list-style: none;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 82px;
+  padding: .625rem .375rem;
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-sm);
+  background: var(--c-white);
+  text-align: center;
+  font-size: var(--t-micro);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.tile .icon { width: 1.375rem; height: 1.375rem; }
+
+/* -------------------------------------------------------------------------
+   V5.2  Clients — pílulas que fluem, sem grade rígida
+   Antes: 10 chips numa grade de 3 colunas com alturas iguais, 382px.
+   ------------------------------------------------------------------------- */
+.pills { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: .5rem .8rem;
+  border: var(--hair) solid var(--c-divider);
+  border-radius: var(--r-pill);
+  background: var(--c-white);
+  font-size: var(--t-meta);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+/* Ênfase no cursor, sem prometer clique: só o traço escurece.
+   Preto é o recurso de destaque do portfólio — é o mesmo sinal que a nav
+   usa para marcar a página atual. Sem cursor de link, porque não é link. */
+@media (hover: hover) {
+  .tile:hover, .pill:hover { border-color: var(--c-black); transform: translateY(-1px); }
+}
+
+@media (min-width: 48em) {
+  .tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (min-width: 62em) {
+  /* no desktop as duas listas empilham em largura total: 6 e 10 itens
+     numa linha cada, em vez de duas colunas apertadas */
+  .band { grid-template-columns: minmax(0, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
+}
+
+/* -------------------------------------------------------------------------
+   V5.3  Nav que sai da frente
+   Páginas de 3 a 7 telas no celular. A barra fixa custa 56px em toda
+   rolagem; some ao descer, volta ao subir, e está sempre presente no topo.
+   Só no celular — no desktop a barra não disputa espaço.
+   ------------------------------------------------------------------------- */
+@media (max-width: 47.9375em) {
+  .nav { transition: transform var(--dur-slow) var(--ease); will-change: transform; }
+  .nav.is-tucked { transform: translateY(-105%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav { transition: none; }
+}
+
+/* -------------------------------------------------------------------------
+   V5.4  Coerência final
+   Um alvo de toque mínimo para tudo que é clicável, e foco visível
+   também nas trilhas, que recebem tabindex pelo JS.
+   ------------------------------------------------------------------------- */
+.rail:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; border-radius: var(--r-xs); }
+.ncard__more, .card__cta, .nav__link, .index-list a, .pcard__l, .pn__i, .crumb a { touch-action: manipulation; }
+
+/* V5.5 — alvos de toque: a varredura pegou a marca em 36px no celular e os
+   links do menu em 38–40px entre 768 e 1024. Todos passam a 44px, que é o
+   mínimo das WCAG 2.2. O texto não se move: as caixas crescem para cima,
+   porque a linha do menu é alinhada pela base. */
+.nav__brand { min-height: var(--tap); align-items: center; }
+.nav__link  { min-height: var(--tap); }
+@media (max-width: 47.9375em) {
+  .nav__brand { padding-block: 0; }
+  .nav__link  { min-height: var(--tap); padding-top: .75rem; }
+}
