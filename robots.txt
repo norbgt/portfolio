@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://norbgt.github.io/portfolio/sitemap.xml

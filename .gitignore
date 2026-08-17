@@ -1,0 +1,8 @@
+# Ferramenta interna: contém links dos assets do Figma. Nunca publicar.
+_baixar-imagens.html
+
+# Lixo do macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
