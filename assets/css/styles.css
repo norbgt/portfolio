@@ -1231,16 +1231,10 @@ body { overflow-x: clip; }
 /* no desktop a Home volta à grade colada do Figma, sem bordas duplicadas */
 @media (min-width: 62em) {
   .rail .card { border-radius: 0; border-left: 0; border-top: 0; border-bottom: 0; border-right: var(--hair) solid var(--c-divider); }
-  .rail[aria-label="Featured work"], .rail[aria-label="Where I have worked"] {
-    border: var(--hair) solid var(--c-divider);
-    gap: 0;
-  }
-  /* V11.3: o último cartão mantém a borda, só que invisível. Removê-la
-     deixava esse cartão 1px mais largo por dentro — e, com aspect-ratio,
-     a imagem dele ficava meio pixel mais alta que a dos vizinhos, jogando
-     título e descrição para fora do alinhamento da fileira. */
-  .rail[aria-label="Featured work"] > li:last-child .card,
-  .rail[aria-label="Where I have worked"] > li:last-child .card { border-right-color: transparent; }
+  /* V20: a grade colada saiu. "Where I have worked" não existe mais como
+     trilha, e Featured work passou a ter espaço entre os cartões — quatro
+     artefatos densos encostados liam como uma imagem só, quebrada.
+     As regras novas vivem no bloco V20, no fim do arquivo. */
 }
 /* =========================================================================
    V5 — PADRONIZAÇÃO
@@ -2001,4 +1995,60 @@ body { overflow-x: clip; }
 
 @media (min-width: 90em) {
   .casegrid { grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); }
+}
+
+/* =========================================================================
+   V20 — OS CARTÕES DE DESTAQUE NO DESKTOP
+   Em 1512px os quatro cartões ficam com 320px e a imagem com 318×199 — um
+   blueprint de 1388px espremido em 199px de altura. Duas correções, sem
+   mexer no número de colunas:
+
+   1. O recorte deixa de ser pelo centro. Esses artefatos se leem da
+      esquerda para a direita e de cima para baixo: o blueprint começa nas
+      fases 1 e 2, o quadro de oportunidades nas primeiras etapas. Ancorar
+      no canto superior esquerdo faz cada miniatura começar onde o artefato
+      começa, em vez de mostrar uma faixa arbitrária do meio.
+   2. Os cartões ganham espaço entre si. A grade colada do Figma junta as
+      quatro imagens numa faixa contínua, e quatro artefatos densos lado a
+      lado sem respiro leem como uma imagem só, quebrada. Cada cartão passa
+      a ter a própria borda e o próprio espaço.
+   Abaixo de 62em nada muda: no celular é uma trilha de um cartão por vez.
+   ====================================================================== */
+.rail--cases .pcard__media img { object-position: left top; }
+
+@media (min-width: 62em) {
+  .rail--cases {
+    border: 0;
+    gap: clamp(1rem, .5rem + 1.4vw, 1.5rem);
+  }
+  .rail--cases .pcard {
+    border: var(--hair) solid var(--c-divider);
+    border-radius: var(--r-xs);
+    overflow: hidden;
+  }
+  /* a imagem sangra até a borda do cartão e o texto é que ganha recuo:
+     o artefato usa a largura inteira, e o contorno passa a ser do cartão */
+  .rail--cases .pcard__l { padding: 0 0 clamp(1rem, .7rem + 1.4vw, 1.5rem); }
+  .rail--cases .pcard__media { border: 0; border-bottom: var(--hair) solid var(--c-divider); }
+  .rail--cases .pcard__b { padding-inline: clamp(.875rem, .6rem + .8vw, 1.25rem); padding-top: .875rem; }
+}
+
+/* =========================================================================
+   V21 — OS DOIS VÃOS EXAGERADOS DO DESKTOP
+   Medi vão a vão em 390, 768, 1024 e 1512. O ritmo entre seções é um clamp
+   de 44 a 80px e está certo — sobe com a largura, na proporção. Só dois
+   vãos saem da escala no desktop, os dois no topo das páginas:
+
+   · hero → primeiro bloco: 61px no celular, 145px em 1512. É 2,4× o
+     crescimento do resto, e vira uma faixa vazia entre o subtítulo e a
+     linha divisória. Passa a acompanhar o ritmo das seções: 80px.
+   · o respiro depois da frase de abertura (.intro--loose): 33px no celular,
+     72px em 1512 — e ele soma com os 80px da seção seguinte, então viram
+     152px entre "+10 years…" e "Featured work". Cai para 40px.
+
+   Nada muda abaixo de 62em: no celular as duas medidas já estão na escala.
+   ====================================================================== */
+@media (min-width: 62em) {
+  .page { gap: var(--section-gap); }
+  .intro--loose { padding-bottom: clamp(1.5rem, 1rem + 1.4vw, 2.5rem); }
 }
