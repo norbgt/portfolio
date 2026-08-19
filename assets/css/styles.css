@@ -2033,22 +2033,8 @@ body { overflow-x: clip; }
   .rail--cases .pcard__b { padding-inline: clamp(.875rem, .6rem + .8vw, 1.25rem); padding-top: .875rem; }
 }
 
-/* =========================================================================
-   V21 — OS DOIS VÃOS EXAGERADOS DO DESKTOP
-   Medi vão a vão em 390, 768, 1024 e 1512. O ritmo entre seções é um clamp
-   de 44 a 80px e está certo — sobe com a largura, na proporção. Só dois
-   vãos saem da escala no desktop, os dois no topo das páginas:
-
-   · hero → primeiro bloco: 61px no celular, 145px em 1512. É 2,4× o
-     crescimento do resto, e vira uma faixa vazia entre o subtítulo e a
-     linha divisória. Passa a acompanhar o ritmo das seções: 80px.
-   · o respiro depois da frase de abertura (.intro--loose): 33px no celular,
-     72px em 1512 — e ele soma com os 80px da seção seguinte, então viram
-     152px entre "+10 years…" e "Featured work". Cai para 40px.
-
-   Nada muda abaixo de 62em: no celular as duas medidas já estão na escala.
-   ====================================================================== */
-@media (min-width: 62em) {
-  .page { gap: var(--section-gap); }
-  .intro--loose { padding-bottom: clamp(1.5rem, 1rem + 1.4vw, 2.5rem); }
-}
+/* V21 — REVERTIDO a pedido dela.
+   Eu tinha cortado dois vãos do topo no desktop (hero → primeiro bloco de
+   145 para 80px, e o respiro depois da frase de abertura de 72 para 37px).
+   A medida estava certa e o resultado, errado: o respiro maior é o que
+   deixa a abertura clean. Espaço em branco aqui é composição, não sobra. */
