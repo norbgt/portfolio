@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 854 534" role="img" aria-label="Arco Educação — placeholder">
+  <rect width="854" height="534" fill="#f2f2f2"/>
+  <g fill="none" stroke="#575757" stroke-width="2" opacity=".25">
+    <path d="M0 133h854M0 267h854M0 400h854M214 0v534M427 0v534M640 0v534"/>
+  </g>
+  <path d="M287 300c0-77 62-140 140-140s140 63 140 140" fill="none" stroke="#242424" stroke-width="14" stroke-linecap="round"/>
+  <text x="427" y="360" fill="#242424"
+        font-family="Encode Sans Semi Condensed, Instrument Sans, Helvetica Neue, Arial, sans-serif"
+        font-size="58" font-weight="600" letter-spacing="-2" text-anchor="middle">Arco Educação</text>
+  <text x="427" y="398" fill="#696969"
+        font-family="Encode Sans Expanded, Instrument Sans, Helvetica Neue, Arial, sans-serif"
+        font-size="17" letter-spacing="1" text-anchor="middle">PLACEHOLDER</text>
+</svg>

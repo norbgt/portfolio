@@ -105,7 +105,7 @@
       '<button class="viewer__close" type="button" aria-label="Close">✕</button>' +
     '</div>' +
     '<div class="viewer__frame"><img alt=""></div>' +
-    '<p class="viewer__hint">Arraste para explorar · Esc ou ✕ para fechar</p>';
+    '<p class="viewer__hint">Drag to explore · Esc or ✕ to close</p>';
   document.body.appendChild(viewer);
 
   var vImg = viewer.querySelector('img');
@@ -326,9 +326,12 @@
    reserva o número de linhas da mais alta do grupo.
    ========================================================================= */
 (function () {
-  var FAIXAS = ['.ncard__tag, .card__tag, .pcard__n',
+  var FAIXAS = ['.pcard__cap',
+                '.ncard__tag, .card__tag, .pcard__n',
                 '.ncard__t, .card__title, .pcard__t',
                 '.ncard__m, .card__desc, .pcard__o',
+                '.pcard__met',
+                '.pcard__num',
                 '.pcard__m'];
   /* o título dos cartões de case é tipografia de display: encolhê-lo para
      caber em uma linha só faz sentido no celular, onde a coluna é estreita */
@@ -391,4 +394,27 @@
   addEventListener('load', rodar);
   var t;
   addEventListener('resize', function () { clearTimeout(t); t = setTimeout(rodar, 150); });
+})();
+
+/* =========================================================================
+   V15 — PONTOS DE PAGINAÇÃO, POSIÇÃO NA PÁGINA E AMPLIAÇÃO NO CARTÃO
+   ========================================================================= */
+
+/* V15.2 — REMOVIDO: a faixa "You are in".
+   Duas indicações de posição na mesma tela competiam entre si — a barra de
+   leitura no topo já diz o quanto falta, e de forma contínua. A faixa dizia
+   a mesma coisa em degraus, ocupava uma linha fixa abaixo do menu e não
+   levava a lugar nenhum. Ficou a linha. */
+
+/* -------------------------------------------------------------------------
+   V18 — O ANO DO RODAPÉ
+   Antes o rodapé dizia "Last updated · August 2026". Um mês escrito à mão é
+   uma promessa que envelhece sozinha: em janeiro ele ainda diria agosto.
+   Ficou só o ano, e quem o escreve é o navegador — nunca mais fica velho.
+   ---------------------------------------------------------------------- */
+(function () {
+  var ano = String(new Date().getFullYear());
+  document.querySelectorAll('.footer__y').forEach(function (el) {
+    el.textContent = ano;
+  });
 })();
